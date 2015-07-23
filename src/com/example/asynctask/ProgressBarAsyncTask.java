@@ -14,8 +14,14 @@ public class ProgressBarAsyncTask extends AsyncTask<Integer, Integer, String> {
   
     private TextView textView;  
     private ProgressBar progressBar;  
-      
-      
+    //
+    DataFinishListener dataFinishListener;
+    //
+    public void setDataFinishListener(DataFinishListener dataFinishListener){
+        this.dataFinishListener = dataFinishListener;
+    }
+    //
+    
     public ProgressBarAsyncTask(TextView textView, ProgressBar progressBar) {  
         super();  
         this.textView = textView;  
@@ -28,7 +34,7 @@ public class ProgressBarAsyncTask extends AsyncTask<Integer, Integer, String> {
      * 这里的String返回值对应AsyncTask的第三个参数  
      * 该方法并不运行在UI线程当中，主要用于异步操作，所有在该方法中不能对UI当中的空间进行设置和修改  
      * 但是可以调用publishProgress方法触发onProgressUpdate对UI进行操作  
-     */  
+     */
     @Override  
     protected String doInBackground(Integer... params) {  
         NetOperator netOperator = new NetOperator();  
@@ -36,7 +42,7 @@ public class ProgressBarAsyncTask extends AsyncTask<Integer, Integer, String> {
         for (i = 10; i <= 100; i+=10) {  
             netOperator.operator();  
             publishProgress(i);  
-        }  
+        }
         return i + params[0].intValue() + "";  
     }  
   
@@ -48,13 +54,18 @@ public class ProgressBarAsyncTask extends AsyncTask<Integer, Integer, String> {
     @Override  
     protected void onPostExecute(String result) {  
         textView.setText("异步操作执行结束" + result);  
-    }  
+        //
+        if(result != null){
+            dataFinishListener.dataFinishSuccessfully(result);
+        }
+    }
   
   
     //该方法运行在UI线程当中,并且运行在UI线程当中 可以对UI空间进行设置  
     @Override  
-    protected void onPreExecute() {  
+    protected void onPreExecute() {
         textView.setText("开始执行异步线程");  
+        
     }  
   
   
@@ -65,8 +76,12 @@ public class ProgressBarAsyncTask extends AsyncTask<Integer, Integer, String> {
      */  
     @Override  
     protected void onProgressUpdate(Integer... values) {  
-        int vlaue = values[0];  
-        progressBar.setProgress(vlaue);  
+        int vlaue = values[0];
+        progressBar.setProgress(vlaue);
     }  
-  
+    
+    //add by linkun.lk
+    public interface DataFinishListener{
+        void dataFinishSuccessfully(Object data);
+    }
 }  

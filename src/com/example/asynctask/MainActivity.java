@@ -1,5 +1,7 @@
 package com.example.asynctask;
 
+import com.example.asynctask.ProgressBarAsyncTask.DataFinishListener;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ public class MainActivity extends Activity {
     private Button button;  
     private ProgressBar progressBar;  
     private TextView textView;  
+    String result ;
       
     @Override  
     public void onCreate(Bundle savedInstanceState) {  
@@ -25,10 +28,22 @@ public class MainActivity extends Activity {
         button.setOnClickListener(new OnClickListener() {  
               
             @Override  
-            public void onClick(View v) {  
+            public void onClick(View v) { 
                 ProgressBarAsyncTask asyncTask = new ProgressBarAsyncTask(textView, progressBar);  
-                asyncTask.execute(1000);  
+                asyncTask.setDataFinishListener(new DataFinishListener() {
+                    @Override
+                    public void dataFinishSuccessfully(Object data) {
+                        // TODO Auto-generated method stub
+                        result = (String) data;
+                        System.out.println("dataFinishSuccessfully : "+result);
+                        
+                    }
+                });
+                asyncTask.execute(1000);
             }  
         });  
+        
+        System.out.println("dataFinishSuccessfully outside: "+result);
+        
     }  
 }  
